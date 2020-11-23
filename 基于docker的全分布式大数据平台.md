@@ -465,32 +465,78 @@ cp mapred-site.xml.template mapred-site.xml
 ### 5. yarn-site.xml
 
 ```xml
-<!--配置Yarn主节点的位置-->
-<property>  
-    <name>yarn.resourcemanager.hostname</name>
-    <value>spark-master</value>
-</property>         
+<?xml version="1.0"?>
+<configuration>
+    <!--配置Yarn主节点的位置-->
+    <property>  
+        <name>yarn.resourcemanager.hostname</name>
+        <value>new-spark-master</value>
+    </property>         
 
-<!--NodeManager执行MR任务的方式是Shuffle洗牌-->
-<property>  
-    <name>yarn.nodemanager.aux-services</name>
-    <value>mapreduce_shuffle</value>
-</property>
+    <!--NodeManager执行MR任务的方式是Shuffle洗牌-->
+    <property>  
+        <name>yarn.nodemanager.aux-services</name>
+        <value>mapreduce_shuffle</value>
+    </property>
 
-<property>
-    <name>yarn.resourcemanager.webapp.address</name>
-    <value>0.0.0.0:8088</value>
-</property>
+    <property>
+        <name>yarn.resourcemanager.webapp.address</name>
+        <value>0.0.0.0:8088</value>
+    </property>
 
-<!--关闭yarn任务运行时的内存检测-->
-<property>
-    <name>yarn.nodemanager.pmem-check-enabled</name>
-    <value>false</value>
-</property>
-<property>
-    <name>yarn.nodemanager.vmem-check-enabled</name>
-    <value>false</value>
-</property>
+    <!-- 内存-->
+    <property>
+        <name>yarn.scheduler.minimum-allocation-mb</name>
+        <value>1024</value>
+    </property>
+
+    <property>
+        <name>yarn.scheduler.maximum-allocation-mb</name>
+        <value>6144</value>
+    </property>
+
+    <property>
+        <name>yarn.nodemanager.resource.memory-mb</name>
+        <value>16384</value>
+    </property>
+
+    <!--关闭yarn任务运行时的内存检测-->
+    <property>
+        <name>yarn.nodemanager.pmem-check-enabled</name>
+        <value>false</value>
+    </property>
+
+    <property>
+        <name>yarn.nodemanager.vmem-check-enabled</name>
+        <value>false</value>
+    </property>
+
+    <property>
+        <name>yarn.log-aggregation-enable</name>
+        <value>true</value>
+    </property>
+
+    <property>
+        <name>yarn.log-aggregation.retain-seconds</name>
+        <value>259200</value>
+    </property>
+
+    <property>
+        <name>yarn.log-aggregation.retain-check-interval-seconds</name>
+        <value>300</value>
+    </property>
+
+    <property>
+        <name>yarn.nodemanager.local-dirs</name>
+        <value>/yarnLog</value>
+    </property>
+
+    <property>         
+        <name>yarn.resourcemanager.nodes.exclude-path</name>        
+        <value>/bigdata/hadoop-2.7.7/etc/hadoop/yarn.exclude</value>
+        <final>true</final>   
+    </property>
+</configuration>
 ```
 
 
@@ -697,6 +743,7 @@ docker run -it -d \
 60080  --> 8080   master的webUI，sparkwebUI
 60022  --> 22     ssh
 60040  --> 4040   application的webUI
+
 60180  --> 18080  historyServer的webUI
 
 60075  --> 50075  hdfs datanode

@@ -143,23 +143,69 @@ adduser ***
 
 
 
+查看docker容器信息，包括ip
+
+docker inspect <container ID>
 
 
 
 
 
+定时任务
+
+crontab -e
+
+0 6 * * * root /root/docker_test/hive_data_migration/increm_migration_hive_data.sh
+
+
+
+```shell
+docker volume create \
+  --opt type=tmpfs \
+  --opt device=tmpfs \
+  --opt o=size=1G,uid=1000 \
+  mysql
+
+# 启动mysql容器
+docker run -d -p 63306:3306 --net bigdata \
+    --name mysql5.7 --hostname mysql5.7 \
+    -e MYSQL_ROOT_PASSWORD=root -v mysql:/var/lib/mysql \
+    mysql:5.7 
+```
 
 
 
 
+```shell
+
+schematool -initSchema -dbType mysql
+
+```
 
 
 
+hive-site.xml
+
+```xml
+<!--开头加上这几句-->
+<property>
+    <name>system:java.io.tmpdir</name>
+    <value>/tmp/hive/java</value>
+  </property>
+ <property>
+    <name>system:user.name</name>
+    <value>${user.name}</value>
+ </property>
+```
 
 
 
-
-
+| name                                    | value                                               | description                    |
+| --------------------------------------- | --------------------------------------------------- | ------------------------------ |
+| `javax.jdo.option.ConnectionURL`        | `jdbc:mysql://localhost:3306/metastore?useSSL=true` | 指定连接的数据库（之前创建的） |
+| `javax.jdo.option.ConnectionDriverName` | `com.mysql.jdbc.Driver`                             | 数据库驱动                     |
+| `javax.jdo.option.ConnectionUserName`   | `hiveuser`                                          | 用户名（之前创建的）           |
+| `javax.jdo.option.ConnectionPassword`   | `123456`                                            | 用户名密码                     |
 
 
 
