@@ -1105,7 +1105,7 @@ done
 
 
 
-### 5.2增量数据迁移
+### 5.2 增量数据迁移
 
 `increm_migration_hive_data.sh`
 
