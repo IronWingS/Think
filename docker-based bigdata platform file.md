@@ -470,7 +470,7 @@ cp mapred-site.xml.template mapred-site.xml
     <!--配置Yarn主节点的位置-->
     <property>  
         <name>yarn.resourcemanager.hostname</name>
-        <value>new-spark-master</value>
+        <value>spark-master</value>
     </property>         
 
     <!--NodeManager执行MR任务的方式是Shuffle洗牌-->
@@ -528,7 +528,7 @@ cp mapred-site.xml.template mapred-site.xml
 
     <property>
         <name>yarn.nodemanager.local-dirs</name>
-        <value>/yarnLog</value>
+        <value>/logs/yarnLog</value>
     </property>
 
     <property>         
