@@ -23,8 +23,7 @@ Docker集群一键启动包中有以下四部分内容：
 1. 在spark-master所在宿主机初始化swarm集群
 
 ```shell
-docker swarm init \ 
- --advertise-addr 192.168.106.58 # 如果主机有多个ip，则需要用该参数指定要用的那个
+docker swarm init --advertise-addr 192.168.7.83 # 如果主机有多个ip，则需要用--advertise-addr指定要用的那个
 ```
 
 2. 执行该命令后会返回一长串token，也就是下面这条命令--token后的参数。在spark-slave1所在宿主机和spark-slave2所在宿主机执行下面这条命令。
@@ -52,46 +51,3 @@ docker network ls
 ## 2 启动docker集群
 
 配置好`configuration.properties`文件之后，直接执行`start-cluster.sh` 即可。
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

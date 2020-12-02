@@ -1,4 +1,4 @@
-电子书地址： <https://yeasy.gitbook.io/docker_practice/image/pull>
+ 电子书地址： <https://yeasy.gitbook.io/docker_practice/image/pull>
 
 # 第一章 Apache 软件下载地址
 
@@ -20,8 +20,9 @@ https://mirrors.bfsu.edu.cn/apache/
 
 https://mirrors.tuna.tsinghua.edu.cn/apache/hive/
 
-##三、系统版本
+## 三、系统版本
 
+```shell
 Hadoop 2.7.7
 
 Spark 2.4.7
@@ -29,8 +30,7 @@ Spark 2.4.7
 jdk1.8.0_261
 
 scala-2.12.8
-
-
+```
 
 
 
@@ -738,17 +738,17 @@ docker run -it -d \
 ## 2 端口
 
 ```shell
-60088  --> 8088   yarn resourcemanager
-60070  --> 50070  hdfs namenode
-60080  --> 8080   master的webUI，sparkwebUI
-60022  --> 22     ssh
-60040  --> 4040   application的webUI
+60188  --> 8088   yarn resourcemanager
+60170  --> 50070  hdfs namenode
+60180  --> 8080   master的webUI，sparkwebUI
+60122  --> 22     ssh
+60140  --> 4040   application的webUI
 
 60180  --> 18080  historyServer的webUI
 
-60075  --> 50075  hdfs datanode
-60042  --> 8042   yarn nodemanager
-60081  --> 8081   worker的webUI
+60175  --> 50075  hdfs datanode
+60142  --> 8042   yarn nodemanager
+60181  --> 8081   worker的webUI
 
        --> 7077：提交任务的端口
 ```
@@ -858,9 +858,13 @@ start-cluster.sh
 ```shell
 #!/bin/bash
 
+. configuration.properties
+
 # 宿主机ip或主机名
-hadoop_slave1=hdfsslave3
-hadoop_slave2=hdfsslave4
+hadoop_slave1=$slave1_ip
+hadoop_slave2=$slave2_ip
+
+. change_hive_site.sh
 
 # 同步配置文件
 rsync -rtv /root/docker_test/hadoop_cluster_test $hadoop_slave1:/root/docker_test
@@ -885,98 +889,125 @@ start-container.sh
 
 ```shell
 #!/bin/bash
-
+. configuration.properties
 # 配置集群ip
-master_ip=192.168.106.58
-slave1_ip=192.168.106.68
-slave2_ip=192.168.106.69
+MASTER=$master_ip
+SLAVE1=$slave1_ip
+SLAVE2=$slave2_ip
+
+NETWORK_SEGMENT=$network_segment
+
+MASTER_MEM=$master_mem   
+SLAVE1_MEM=$slave1_mem     
+SLAVE2_MEM=$slave2_mem     
 
 # 获得当前主机ip
-ip=`ifconfig |grep 192.168.106.*|awk '{print $2}'`
+ip=`ifconfig |grep $NETWORK_SEGMENT.*|awk '{print $2}'`
 
 echo $ip
 
 # 在各自的主机上创建镜像，启动容器
-if [ $ip == $master_ip ]
+if [ $ip == $MASTER ]
 then
     # 制作镜像
     docker build -t hadoop:v1 .
 
     # 配置volume
-    docker volume create \
-      --opt type=tmpfs \
-      --opt device=tmpfs \
-      --opt o=size=50G,uid=1000 \
-      hdfs-m
-
-    #docker volume create \
-      --opt type=tmpfs \
-      --opt device=tmpfs \
-      --opt o=size=1G,uid=1000 \
-      mysql
-
-     启动mysql容器
-    docker run -d -p 63306:3306 --net bigdata \
-        --name mysql5.7 --hostname mysql5.7 \
-        -e MYSQL_ROOT_PASSWORD=root -v mysql:/var/lib/mysql \
-        mysql:5.7 
+    docker volume create hdfs-m
+        docker volume create homed
+        docker volume create logs
 
     # 启动hadoop容器
     docker run -it -d \
-        -p 60022:22 -p 60080:8080 -p 60088:8088 -p 60070:50070 \
-        -p 18080:18080 -p 60040:4040 -p 60020:8020\
+        -p 60122:22 -p 60180:8080 -p 60188:8088 -p 60170:50070 \
+        -p 60180:18080 -p 60140:4040 -p 60120:8020\
         --name spark-master --hostname spark-master \
-        -m 5G  --net bigdata --cpuset-mems="1" \
-        --privileged \
-        -v hdfs-m:/root/hdfs/namenode \
-        hadoop:v1 \
-        init
+        -m $MASTER_MEM  --net bigdata --cpuset-mems="1" \
+                --mount type=bind,source=/var/lib/docker/volumes/hdfs-m/_data,target=/root/hdfs/namenode \
+                --mount type=bind,source=/var/lib/docker/volumes/homed/_data,target=/homed \
+                --mount type=bind,source=/var/lib/docker/volumes/logs/_data,target=/logs \
+        hadoop:v1 
         
-elif [ $ip == $slave1_ip ]
+elif [ $ip == $SLAVE1 ]
 then
     # 制作镜像
     docker build -t hadoop:v1 .
 
     # 配置volume
-    docker volume create \
-      --opt type=tmpfs \
-      --opt device=tmpfs \
-      --opt o=size=50G,uid=1001 \
-      hdfs-s1
+        docker volume create hdfs-s1
+        docker volume create homed
+        docker volume create logs
 
     # 启动容器
     docker run -it -d \
-        -p 60022:22 -p 60075:50075 -p 60042:8042 -p 60081:8081 \
+        -p 60122:22 -p 60175:50075 -p 60142:8042 -p 60181:8081 \
         --name spark-slave1 --hostname spark-slave1 \
-        -m 20G --net bigdata --cpuset-mems="1" \
-        --privileged \
-        -v hdfs-s1:/bigdata/hadoop/hadoop-2.7.7/hdfs/datanode \
-        hadoop:v1 \
-        init
+        -m $SLAVE1_MEM --net bigdata --cpuset-mems="1" \
+                --mount type=bind,source=/var/lib/docker/volumes/hdfs-s1/_data,target=/root/hdfs/datanode \
+                --mount type=bind,source=/var/lib/docker/volumes/homed/_data,target=/homed \
+                --mount type=bind,source=/var/lib/docker/volumes/logs/_data,target=/logs \
+        hadoop:v1 
         
-elif [ $ip == $slave2_ip ]
+elif [ $ip == $SLAVE2 ]
 then
     # 制作镜像
     docker build -t hadoop:v1 .
+
     # 配置volume
-    docker volume create  \
-      --opt type=tmpfs \
-      --opt device=tmpfs \
-      --opt o=size=50G,uid=1002 \
-      hdfs-s2
+    docker volume create hdfs-s2
+        docker volume create homed
+        docker volume create logs
 
     # 启动容器
     docker run -it -d \
-        -p 60022:22 -p 60075:50075 -p 60042:8042 -p 60081:8081 \
+        -p 60122:22 -p 60175:50075 -p 60142:8042 -p 60181:8081 \
         --name spark-slave2 --hostname spark-slave2 \
-        -m 75G --net bigdata --cpuset-mems="1" \
-        --privileged \
-        -v hdfs-s2:/bigdata/hadoop/hadoop-2.7.7/hdfs/datanode \
-        hadoop:v1 \
-        init
+        -m $SLAVE2_MEM --net bigdata --cpuset-mems="1" \
+                --mount type=bind,source=/var/lib/docker/volumes/hdfs-s2/_data,target=/root/hdfs/datanode \
+                --mount type=bind,source=/var/lib/docker/volumes/homed/_data,target=/homed \
+                --mount type=bind,source=/var/lib/docker/volumes/logs/_data,target=/logs \
+        hadoop:v1 
 else 
     echo "请在指定的主机上进行安装"
 fi
+```
+
+2.3 配置文件
+
+```shell
+#######################  集群环境配置  #######################
+#配置主机ip
+master_ip=192.168.48.58
+slave1_ip=192.168.48.68
+slave2_ip=192.168.48.69
+
+#配置当前网路的网段
+network_segment=192.168.48
+
+#配置三台主机最大占用内存
+master_mem=5G   
+slave1_mem=50G     
+slave2_mem=75G 
+
+####################### hive-site相关文件配置 #######################
+# 元数据库的用户名
+hive_old_name=root
+hive_new_name=root
+
+#元数据库的密码
+hive_old_password=newclustersql
+hive_new_password=newclustersql
+
+#元数据库的url
+hive_old_url=jdbc:mysql://192.168.106.57:3306/homed_docker_hive
+hive_new_url=jdbc:mysql://192.168.106.57:3306/homed_docker_hive
+
+#元数据库dirver_name
+hive_old_driname=com.mysql.jdbc.Driver
+hive_new_driname=com.mysql.jdbc.Driver
+
+#hive-site.xml文件所在路径
+hive_site_dir=config/hive-site.xml
 ```
 
 
