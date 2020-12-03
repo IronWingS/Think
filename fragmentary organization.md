@@ -440,9 +440,20 @@ VA510-23F57-M85PY-7FN7C-MCRG0
 
 
 
+docker 容器通过Dockerfile配置环境变量，最后的存储位置在/proc/1/environ
 
 
 
+```shell
+WARN 2020/12/03 11:05:35 [org.apache.spark.deploy.yarn.Client] : Neither spark.yarn.jars nor spark.yarn.archive is set, falling back to uploading libraries under SPARK_HOME.
+
+到这句就特别慢，得解决一下
+
+WARN 2020/12/03 11:47:04 [org.apache.spark.deploy.yarn.Client] : Neither spark.yarn.jars nor spark.yarn.archive is set, falling back to uploading libraries under SPARK_HOME.
+INFO 2020/12/03 11:48:40 [org.apache.spark.deploy.yarn.Client] : Uploading resource file:/bigdata/spark-2.4.7/spark-548fbbad-f511-4bc8-b808-ab91f1737c99/__spark_libs__6260887161745699024.zip -> hdfs://spark-master:9000/user/root/.sparkStaging/application_1606464624295_0040/__spark_libs__6260887161745699024.zip
+INFO 2020/12/03 11:48:45 [org.apache.spark.deploy.yarn.Client] : Uploading resource file:/bigdata/spark-2.4.7/spark-548fbbad-f511-4bc8-b808-ab91f1737c99/__spark_conf__6203879705710476118.zip -> hdfs://spark-master:9000/user/root/.sparkStaging/application_1606464624295_0040/__spark_conf__.zip
+
+```
 
 
 
