@@ -157,37 +157,43 @@ docker相关知识。
 
 
 
-说说什么是Docker？
+**1.说说什么是Docker？**
 
-docker也叫容器，是一种系统虚拟化技术，可以实现系统的快速部署，这样就可以解决开发环境与测试环境的不一致的问题。目前常用的系统虚拟化技术有虚拟机和容器两种，虚拟机是一种重量级的
-
-
-
-什么是Docker镜像？
-
-什么是Docker容器
-
-Docker容器有几种状态
-
-Dockerfile中最常见的指令是什么
-
-Dockerfile中的命令COPY和ADD命令有什么区别
-
-docker常用命令
-
-容器与主机之间的数据拷贝命令
-
-启动nginx容器（随机端口映射），并挂载本地文件目录到容器html的命令
+docker是一种用来创建容器的工具，可以通过namespace和cgroup两种技术创建相互之间隔离的容器。
 
 
 
-解释一下dockerfile的ONBUILD指令
+**2. 什么是namespace？什么是cgroup**
 
-什么是Docker Swarm
+namespace是linux内核的一项功能，主要负责资源的分配。再同一namespace中的进程共享该空间中的资源，不同namespace中的资源互不干扰。
 
-如何在生产中监控Docker
+（namespace的设计灵感来自贝尔实验室的9号计划，该计划主要是想开发一个可以取代unix的分布式操作系统）
 
-Docker如何在非Linux系统中运行容器
+cgroup，全称(control groups)，主要负责限制进程使用的资源（包括CPU占用率、内存、网络等）
+
+
+
+**3. 什么是DevOps？**
+
+DevOps是Development和Operations的缩写，即开发和运维。DevOps是一种文化，一种开发、测试和运维相互沟通协作的文化。
+
+Docker就是一种可以很好的实现这种文化的媒介。
+
+
+
+**4. 什么是CI/CD**
+
+CI表示持续集成，就是将开发人员写好的代码自动的构建、测试并更新到共享代码库中。
+
+这样可以避免不同开发人员编写的代码之间的冲突。同时，这个流程也需要系统拥有在一天之内多次编译代码的能力。（不过老实说，我还真的没有完全搞清楚，这个CI到底是怎么一回事。）
+
+
+
+
+
+
+
+
 
 
 
