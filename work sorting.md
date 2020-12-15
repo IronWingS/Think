@@ -89,3 +89,13 @@ mysql -h 192.168.48.100 -P 3306 -u homed -p newclustersql
 
 
 
+# 2020-12-14
+
+目前遇到的这个任务，第一个难点，就是怎么把DataFrame保存到HBase中，关键是，这个DataFrame中有一列是不断变化的，所以相应的HBase中的列族也要变幻，也就是要实现动态插入DataFrame的列。
+
+- [ ]  安装好伪分布模式的HBase
+- [ ] 搞定HBase如何在列族中新增一列
+- [ ] DataFrame怎么把一列按 | 进行分割
+- [ ] 算法
+- [ ] 公众号文章
+
