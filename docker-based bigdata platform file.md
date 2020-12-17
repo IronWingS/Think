@@ -620,6 +620,8 @@ docker swarm init \
 # slave 加入swarm集群
 docker swarm join --token SWMTKN-1-1iand4b3nj06w1z2bjurcj19ymh7xf4n7hj9xkuo9l02wq5r35-8vor2hookk6llgn8jvji1paqe 192.168.106.58:2377
 
+
+
 # 查看
 docker network ls
 
