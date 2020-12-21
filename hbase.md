@@ -10,6 +10,18 @@ https://stackoverflow.com/questions/49649449/hbase-shell-crash-after-backspace
 
 
 
+hbase建表语句
+
+```shell
+t1 = create 't1', 'f1'
+```
+
+查看表
+
+```
+list
+```
+
 
 
 
