@@ -67,7 +67,7 @@ docker exec -e COLUMNS="`tput cols`" -e LINES="`tput lines`" -ti hbase bash
 ```shell
 alter 'test1', NAME => 'cf', VERSIONS => 5
 alter 'blog', NAME => 'artitle', VERSIONS => 3
-
+alter 'user_info1:row_data', NAME => 'row_data', VERSION => 3
 
 # 插入数据
 put ’<table name>’,’row1’,’<colfamily:colname>’,’<value>’
@@ -232,15 +232,31 @@ create 'test3',
 
 
 
+得到所有版本的数据
 
-
+```shell
 get 'user_info1','50000202',{COLUMN=>'row_data:11000004',VERSIONS=>3}
 
+get 'userinfo','50000202',{COLUMN=>'subtype:row_data',VERSIONS=>5}
+```
 
 
 
+进入hbase 的shell
 
+/bigdata/hbase-1.4.13/bin hbase shell
 
+查看所有的表
+
+list
+
+查看某张表所有的数据
+
+scan "table"
+
+查看某张表，某条记录所有版本的信息
+
+get 'user_info1','50000202',{COLUMN=>'row_data:11000004',VERSIONS=>3}
 
 
 
@@ -261,6 +277,12 @@ format_string(a)
 
 
 
+
+启动hive元数据库
+
+```shell
+hive --service metastore &
+```
 
 
 
